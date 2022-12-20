@@ -1,0 +1,79 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <h1>Full-stack Web Scrapper</h1>
+
+    <h4>Add a new creator</h3>
+        <input class="channel-input" type="text" placeholder="paste Youtube url" />
+        <button type="submit" onclick="submitChannel()">submit</button>
+
+        <div class="container"></div>
+
+        <script>
+
+            function submitChannel() {
+                const channelURL = document.querySelector('.channel-input').value;
+
+                fetch('http://localhost:3000/creators', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ channelURL })
+                })
+
+                // send to server
+            }
+
+            function newElement(type, attributes = {}) {
+                const element = document.createElement(type);
+                for (let attribute in attributes) {
+                    const value = attributes[attribute];
+                    if (attribute == 'innerText') element.innerText = value;
+                    else element.setAttribute(attribute, value);
+                }
+
+                return element;
+
+            }
+
+            async function loadCreators() {
+                const res = await fetch('http://localhost:3000/creators');
+                const creators = await res.json();
+
+                const container = document.querySelector('.container');
+
+                creators.forEach(creator => {
+                    const card = newElement('div', { class: 'card' });
+                    const title = newElement('h4', { innerText: creator.name });
+                    const img = newElement('img', { src: creator.img });
+                    img.style.width = '100px';
+                    card.appendChild(title);
+                    card.appendChild(img);
+                    container.appendChild(card);
+                })
+            }
+
+            loadCreators();
+
+
+        </script>
+
+        <style>
+            .container {
+                display: flex;
+            }
+
+            .card {
+                margin: 5px;
+                padding: 25px;
+                border: 1px solid white;
+            }
+        </style>
+</body>
+
+</html>
